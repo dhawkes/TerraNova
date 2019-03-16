@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Battlebot_Control_Hub
+namespace TerraNova_Control_Hub
 {
     static class Program
     {

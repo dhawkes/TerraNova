@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Battlebot_Control_Hub.Properties
+namespace TerraNova_Control_Hub.Properties
 {
 
 

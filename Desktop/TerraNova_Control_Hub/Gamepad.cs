@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Battlebot_Control_Hub
+namespace TerraNova_Control_Hub
 {
     public struct DPad
     {
