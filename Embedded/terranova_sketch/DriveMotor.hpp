@@ -3,8 +3,7 @@
 #include <Arduino.h>
 #include "Encoder.hpp"
 
-class DriveMotor
-{
+class DriveMotor : public PinInterrupt {
   public:
     DriveMotor(uint8_t INA, uint8_t INB, uint8_t PWM, uint8_t EN, uint8_t CS, uint8_t ENCA, uint8_t ENCB, uint16_t ticks_per_rot);
 
@@ -15,6 +14,8 @@ class DriveMotor
     float readRotationalSpeed();
     bool readFaultStatus();
 
+    void pinChanged(uint8_t pin);
+
   private:
     Encoder* encoder;
     uint8_t _INA;
@@ -24,6 +25,4 @@ class DriveMotor
     uint8_t _CS;
     volatile bool fault;
     volatile bool checked;
-
-    void faultISR();
 };

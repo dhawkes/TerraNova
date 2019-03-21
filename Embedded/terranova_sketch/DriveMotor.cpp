@@ -20,7 +20,7 @@ void DriveMotor::init() {
   analogWriteResolution(12);
   analogReadResolution(13);
 
-//  attachInterrupt(digitalPinToInterrupt(_EN), faultISR, CHANGE);
+  attachArgInterrupt(_EN, CHANGE);
   encoder->init();
 }
 
@@ -58,7 +58,7 @@ void DriveMotor::setBrake(uint8_t brake) {
 }
 
 float DriveMotor::readCurrent() {
-  return ((analogRead(_CS) * 5000000) / 8191) / 140.0f;
+  return ((analogRead(_CS) * 3300000) / 8191) / 140.0f;
 }
 
 float DriveMotor::readRotationalSpeed() {
@@ -73,7 +73,7 @@ bool DriveMotor::readFaultStatus() {
 }
 
 
-void DriveMotor::faultISR() {
+void DriveMotor::pinChanged(uint8_t pin) {
   fault = !(digitalRead(_EN) && checked);
   checked = false;
 }

@@ -9,6 +9,7 @@ class Encoder : public PinInterrupt {
     Encoder(uint8_t PIN, uint16_t ticks_per_rot);
     void init();
     float readSpeed();
+    
     void pinChanged(uint8_t pin);
 
   private:
