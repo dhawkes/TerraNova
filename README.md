@@ -1,10 +1,14 @@
 # TerraNova
 
+![terra_nova_logo](/Images/terranova.png)
+
 This repository contain all the code use to run the TerraNova rover
 
 ### Prerequisites
 
 Honestly, you need our rover, soz
+
+![moon_rover](/Images/moon_rover.jpg)
 
 ## Authors
 
