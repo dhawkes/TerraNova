@@ -17,7 +17,7 @@ class Encoder : public PinInterrupt {
     uint8_t _PINB;
     uint16_t _ticks_per_rot;
     unsigned long _prev_time;
-    volatile uint8_t _tick_count;
+    volatile uint16_t _tick_count;
     volatile unsigned long _rot_time;
     volatile bool _dir_primed;
     volatile bool _dir;

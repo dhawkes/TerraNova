@@ -18,12 +18,14 @@ void Encoder::init() {
   if(_PINB > 0)
     attachArgInterrupt(_PINB, CHANGE);
   _prev_time = micros();
+  //_rot_time = 0;
 }
 
 float Encoder::readSpeed() {
-  if(micros() - _prev_time > 1000000)
+  if(micros() - _prev_time > 2000000)
     return 0;
-  float speed = 1.0f / _rot_time / 1000000.0f / 60.0f;
+  float speed = (float)(1.0f / (((float)_rot_time) / 1000000.0f / 60.0f));
+  //float speed = _rot_time;
   if(_PINB > 0 && _dir)
     return -speed;
   return speed;

@@ -1,8 +1,16 @@
 #pragma once
 
+#include <Arduino.h>
+
 class PinInterrupt {
 public:
   virtual void pinChanged(uint8_t pin) = 0;
+  static PinInterrupt* intArg[58];
+  
+  template <uint8_t p>
+  static void isr() {
+    intArg[p]->pinChanged(p);
+  }
 
 protected:
   bool attachArgInterrupt(uint8_t pin, uint8_t mode) {
@@ -127,13 +135,5 @@ protected:
     else if(pin == 57)
       attachInterrupt(pin, isr<57>, mode);
     return true;
-  }
-  
-private:
-  static PinInterrupt* intArg[58];
-
-  template <uint8_t p>
-  static void isr() {
-    intArg[p]->pinChanged(p);
   }
 };

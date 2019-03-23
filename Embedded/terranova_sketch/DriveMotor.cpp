@@ -32,7 +32,8 @@ void DriveMotor::setSpeed(int8_t speed) {
   }
   speed = speed > 100 ? 100 : speed;
 
-  analogWrite(_PWM, (4096 * speed) / 100);
+  int t = (4096 * speed) / 100;
+  analogWrite(_PWM, t);
 
   if(speed == 0) {
     digitalWrite(_INA, LOW);
@@ -58,7 +59,8 @@ void DriveMotor::setBrake(uint8_t brake) {
 }
 
 float DriveMotor::readCurrent() {
-  return ((analogRead(_CS) * 3300000) / 8191) / 140.0f;
+  return analogRead(_CS);
+  //return ((analogRead(_CS) * 3300000) / 8191) / 140.0f;
 }
 
 float DriveMotor::readRotationalSpeed() {
@@ -67,7 +69,7 @@ float DriveMotor::readRotationalSpeed() {
 
 bool DriveMotor::readFaultStatus() {
   bool lastF = fault;
-  fault = digitalRead(_EN);
+  fault = !digitalRead(_EN);
   checked = true;
   return lastF;
 }
