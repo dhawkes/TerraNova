@@ -1,12 +1,12 @@
 #include "DriveMotor.hpp"
 
-DriveMotor::DriveMotor(uint8_t INA, uint8_t INB, uint8_t PWM, uint8_t EN, uint8_t CS, uint8_t ENCA, uint8_t ENCB, uint16_t ticksPerRot) {
+DriveMotor::DriveMotor(uint8_t INA, uint8_t INB, uint8_t PWM, uint8_t EN, uint8_t CS, uint8_t ENCA, uint8_t ENCB, uint16_t ticks_per_rot) {
   _INA = INA;
   _INB = INB;
   _PWM = PWM;
   _EN = EN;
   _CS = CS;
-  encoder = new Encoder(ENCA, ENCB, ticksPerRot);
+  encoder = new Encoder(ENCA, ENCB, ticks_per_rot);
 }
 
 void DriveMotor::init() {
@@ -32,8 +32,7 @@ void DriveMotor::setSpeed(int8_t speed) {
   }
   speed = speed > 100 ? 100 : speed;
 
-  int t = (4096 * speed) / 100;
-  analogWrite(_PWM, t);
+  analogWrite(_PWM, (4096 * speed) / 100);
 
   if(speed == 0) {
     digitalWrite(_INA, LOW);
@@ -59,8 +58,7 @@ void DriveMotor::setBrake(uint8_t brake) {
 }
 
 float DriveMotor::readCurrent() {
-  return analogRead(_CS);
-  //return ((analogRead(_CS) * 3300000) / 8191) / 140.0f;
+  return ((analogRead(_CS) * 3300000) / 8191) / 140.0f;
 }
 
 float DriveMotor::readRotationalSpeed() {

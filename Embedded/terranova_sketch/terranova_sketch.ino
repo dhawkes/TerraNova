@@ -1,16 +1,16 @@
-#include "DriveMotor.hpp"
+#include "JumpMotor.hpp"
 
-DriveMotor m1(31, 30, 2, 0, A14, 28, 29, 48 * 99);
-
+JumpMotor j(30, 34, A14, A0, 0, 2 * 175);
 
 void setup() {
   // put your setup code here, to run once:
-  m1.init();
+  j.init();
   Serial.begin(9600);
+  j.setSpeed(100);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println(m1.readFaultStatus());
-  delay(2000);
+  Serial.println(j.readRotationalSpeed());
+  delay(100);
 }
