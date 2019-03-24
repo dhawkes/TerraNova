@@ -217,27 +217,50 @@ namespace TerraNova_Control_Hub
         {
             // Load data definitions
             StreamReader sr = new StreamReader("config/data_definition.csv");
-            while(!sr.EndOfStream)
+
+            string path = @"C:\Users\Dylan Hawkes\Documents\GIT\Senior-Design\Embedded\terranova_sketch\Constants.hpp";
+            StreamWriter sw = new StreamWriter(path);
+            sw.WriteLine("// This file contains generated constant values used for data collection");
+            sw.WriteLine();
+
+            while (!sr.EndOfStream)
             {
                 string[] pieces = sr.ReadLine().Split(',');
                 string name = Regex.Replace(pieces[1], "(\\B[A-Z])", " $1");
+                string uppername = Regex.Replace(pieces[1], "(?<=.)([A-Z])", "_$0").ToUpper();
                 string[] row = new string[] { name, pieces[2], "0.0000" };
                 DataDGV.Rows.Add(row);
                 data_rows.Add(int.Parse(pieces[0]), DataDGV.Rows[DataDGV.RowCount - 1]);
+
+                StringBuilder sb = new StringBuilder("#define D_");
+                sb.Append(uppername);
+                sb.Append(' ');
+                sb.Append(pieces[0]);
+                sw.WriteLine(sb.ToString());
             }
             sr.Close();
+            sw.WriteLine();
 
             sr = new StreamReader("config/fault_definition.csv");
             while(!sr.EndOfStream)
             {
                 string[] pieces = sr.ReadLine().Split(',');
                 string name = Regex.Replace(pieces[1], "(\\B[A-Z])", " $1");
+                string uppername = Regex.Replace(pieces[1], "(?<=.)([A-Z])", "_$0").ToUpper();
                 string[] row = new string[] { name, "GOOD" };
                 FaultDGV.Rows.Add(row);
                 fault_rows.Add(int.Parse(pieces[0]), FaultDGV.Rows[FaultDGV.RowCount - 1]);
                 FaultDGV.Rows[FaultDGV.RowCount - 1].Cells[1].Style.BackColor = Color.LightGreen;
+
+                StringBuilder sb = new StringBuilder("#define F_");
+                sb.Append(uppername);
+                sb.Append(' ');
+                sb.Append(pieces[0]);
+                sw.WriteLine(sb.ToString());
             }
             sr.Close();
+            sw.WriteLine();
+            sw.Close();
         }
     }
 }

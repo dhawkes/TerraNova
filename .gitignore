@@ -331,3 +331,6 @@ ASALocalRun/
 
 # Custom files
 *.nova
+
+# Code Gen Files
+Constants.hpp

@@ -59,10 +59,10 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(16, 15);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.pictureBox1.Location = new System.Drawing.Point(8, 8);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1164, 792);
+            this.pictureBox1.Size = new System.Drawing.Size(582, 412);
             this.pictureBox1.TabIndex = 17;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
@@ -71,9 +71,10 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(144, 825);
+            this.label1.Location = new System.Drawing.Point(72, 429);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(437, 61);
+            this.label1.Size = new System.Drawing.Size(225, 31);
             this.label1.TabIndex = 20;
             this.label1.Text = "Controller Status:";
             // 
@@ -82,9 +83,10 @@
             this.Controller_Status_LB.AutoSize = true;
             this.Controller_Status_LB.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Controller_Status_LB.ForeColor = System.Drawing.Color.Red;
-            this.Controller_Status_LB.Location = new System.Drawing.Point(586, 825);
+            this.Controller_Status_LB.Location = new System.Drawing.Point(293, 429);
+            this.Controller_Status_LB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Controller_Status_LB.Name = "Controller_Status_LB";
-            this.Controller_Status_LB.Size = new System.Drawing.Size(448, 61);
+            this.Controller_Status_LB.Size = new System.Drawing.Size(234, 31);
             this.Controller_Status_LB.TabIndex = 21;
             this.Controller_Status_LB.Text = "DISCONNECTED";
             // 
@@ -92,9 +94,10 @@
             // 
             this.log_CB.AutoSize = true;
             this.log_CB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.log_CB.Location = new System.Drawing.Point(1194, 830);
+            this.log_CB.Location = new System.Drawing.Point(597, 432);
+            this.log_CB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.log_CB.Name = "log_CB";
-            this.log_CB.Size = new System.Drawing.Size(180, 41);
+            this.log_CB.Size = new System.Drawing.Size(94, 24);
             this.log_CB.TabIndex = 22;
             this.log_CB.Text = "Log Data";
             this.log_CB.UseVisualStyleBackColor = true;
@@ -105,9 +108,10 @@
             this.LogFileTB.Enabled = false;
             this.LogFileTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LogFileTB.ForeColor = System.Drawing.Color.Gray;
-            this.LogFileTB.Location = new System.Drawing.Point(1376, 827);
+            this.LogFileTB.Location = new System.Drawing.Point(688, 430);
+            this.LogFileTB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LogFileTB.Name = "LogFileTB";
-            this.LogFileTB.Size = new System.Drawing.Size(576, 44);
+            this.LogFileTB.Size = new System.Drawing.Size(290, 26);
             this.LogFileTB.TabIndex = 23;
             this.LogFileTB.Text = "Filename";
             this.LogFileTB.Click += new System.EventHandler(this.LogFileTB_Click);
@@ -123,13 +127,14 @@
             this.nameCol,
             this.unitCol,
             this.valueCol});
-            this.DataDGV.Location = new System.Drawing.Point(1194, 15);
+            this.DataDGV.Location = new System.Drawing.Point(597, 8);
+            this.DataDGV.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.DataDGV.MultiSelect = false;
             this.DataDGV.Name = "DataDGV";
             this.DataDGV.ReadOnly = true;
             this.DataDGV.RowHeadersVisible = false;
             this.DataDGV.RowTemplate.Height = 33;
-            this.DataDGV.Size = new System.Drawing.Size(654, 792);
+            this.DataDGV.Size = new System.Drawing.Size(327, 412);
             this.DataDGV.TabIndex = 24;
             this.DataDGV.SelectionChanged += new System.EventHandler(this.DataDGV_SelectionChanged);
             // 
@@ -140,7 +145,7 @@
             this.nameCol.Name = "nameCol";
             this.nameCol.ReadOnly = true;
             this.nameCol.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.nameCol.Width = 113;
+            this.nameCol.Width = 60;
             // 
             // unitCol
             // 
@@ -148,7 +153,7 @@
             this.unitCol.HeaderText = "Unit";
             this.unitCol.Name = "unitCol";
             this.unitCol.ReadOnly = true;
-            this.unitCol.Width = 95;
+            this.unitCol.Width = 51;
             // 
             // valueCol
             // 
@@ -168,13 +173,14 @@
             this.FaultDGV.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.faultCol,
             this.statusCol});
-            this.FaultDGV.Location = new System.Drawing.Point(1854, 15);
+            this.FaultDGV.Location = new System.Drawing.Point(927, 8);
+            this.FaultDGV.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.FaultDGV.MultiSelect = false;
             this.FaultDGV.Name = "FaultDGV";
             this.FaultDGV.ReadOnly = true;
             this.FaultDGV.RowHeadersVisible = false;
             this.FaultDGV.RowTemplate.Height = 33;
-            this.FaultDGV.Size = new System.Drawing.Size(468, 792);
+            this.FaultDGV.Size = new System.Drawing.Size(234, 412);
             this.FaultDGV.TabIndex = 25;
             this.FaultDGV.SelectionChanged += new System.EventHandler(this.FaultDGV_SelectionChanged);
             // 
@@ -184,7 +190,7 @@
             this.faultCol.HeaderText = "Fault";
             this.faultCol.Name = "faultCol";
             this.faultCol.ReadOnly = true;
-            this.faultCol.Width = 105;
+            this.faultCol.Width = 55;
             // 
             // statusCol
             // 
@@ -197,9 +203,10 @@
             // 
             this.SaveBT.Enabled = false;
             this.SaveBT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SaveBT.Location = new System.Drawing.Point(1962, 825);
+            this.SaveBT.Location = new System.Drawing.Point(981, 429);
+            this.SaveBT.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SaveBT.Name = "SaveBT";
-            this.SaveBT.Size = new System.Drawing.Size(179, 53);
+            this.SaveBT.Size = new System.Drawing.Size(90, 28);
             this.SaveBT.TabIndex = 26;
             this.SaveBT.Text = "Save Log";
             this.SaveBT.UseVisualStyleBackColor = true;
@@ -209,9 +216,10 @@
             // 
             this.ResetBT.Enabled = false;
             this.ResetBT.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ResetBT.Location = new System.Drawing.Point(2143, 825);
+            this.ResetBT.Location = new System.Drawing.Point(1072, 429);
+            this.ResetBT.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.ResetBT.Name = "ResetBT";
-            this.ResetBT.Size = new System.Drawing.Size(179, 53);
+            this.ResetBT.Size = new System.Drawing.Size(90, 28);
             this.ResetBT.TabIndex = 27;
             this.ResetBT.Text = "Reset Log";
             this.ResetBT.UseVisualStyleBackColor = true;
@@ -219,10 +227,10 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(2334, 893);
+            this.ClientSize = new System.Drawing.Size(1167, 463);
             this.Controls.Add(this.ResetBT);
             this.Controls.Add(this.SaveBT);
             this.Controls.Add(this.FaultDGV);
@@ -232,7 +240,7 @@
             this.Controls.Add(this.Controller_Status_LB);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "TerraNova Control Hub";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
