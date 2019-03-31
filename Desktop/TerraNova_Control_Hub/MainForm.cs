@@ -12,7 +12,7 @@ namespace TerraNova_Control_Hub
     {
         // Control variables
         Gamepad joystick;
-        string serial_port = "COM5";
+        string serial_port = "COM10";
 
         // GUI variables
         Image init_img;
@@ -90,8 +90,18 @@ namespace TerraNova_Control_Hub
 
         private void ResetBT_Click(object sender, EventArgs e)
         {
-            data_log.Clear();
-            fault_log.Clear();
+            string msg = "Are you sure that you would like to reset the gathered logs? Gathered data will be permanately deleted.";
+            string caption = "Reset Logs?";
+            MessageBoxButtons mbb = MessageBoxButtons.YesNo;
+            DialogResult dr;
+
+            dr = MessageBox.Show(msg, caption, mbb);
+
+            if (dr == DialogResult.Yes)
+            {
+                data_log.Clear();
+                fault_log.Clear();
+            }
         }
 
         private void SaveBT_Click(object sender, EventArgs e)
@@ -220,8 +230,13 @@ namespace TerraNova_Control_Hub
 
             string path = @"C:\Users\Dylan Hawkes\Documents\GIT\Senior-Design\Embedded\terranova_sketch\Constants.hpp";
             StreamWriter sw = new StreamWriter(path);
+            sw.WriteLine("#pragma once");
+            sw.WriteLine();
             sw.WriteLine("// This file contains generated constant values used for data collection");
             sw.WriteLine();
+
+            int max_d = -1;
+            StringBuilder sb = new StringBuilder();
 
             while (!sr.EndOfStream)
             {
@@ -229,37 +244,58 @@ namespace TerraNova_Control_Hub
                 string name = Regex.Replace(pieces[1], "(\\B[A-Z])", " $1");
                 string uppername = Regex.Replace(pieces[1], "(?<=.)([A-Z])", "_$0").ToUpper();
                 string[] row = new string[] { name, pieces[2], "0.0000" };
+                int id = int.Parse(pieces[0]);
                 DataDGV.Rows.Add(row);
-                data_rows.Add(int.Parse(pieces[0]), DataDGV.Rows[DataDGV.RowCount - 1]);
+                data_rows.Add(id, DataDGV.Rows[DataDGV.RowCount - 1]);
 
-                StringBuilder sb = new StringBuilder("#define D_");
+                sb.Clear();
+                sb.Append("#define D_");
                 sb.Append(uppername);
                 sb.Append(' ');
                 sb.Append(pieces[0]);
                 sw.WriteLine(sb.ToString());
+
+                max_d = max_d < id ? id : max_d;
             }
             sr.Close();
+
+            max_d++;
+            sb.Clear();
+            sb.Append("#define MAX_DATA_LENGTH ");
+            sb.Append(max_d);
+            sw.WriteLine(sb.ToString());
             sw.WriteLine();
 
             sr = new StreamReader("config/fault_definition.csv");
+            int max_f = -1;
+
             while(!sr.EndOfStream)
             {
                 string[] pieces = sr.ReadLine().Split(',');
                 string name = Regex.Replace(pieces[1], "(\\B[A-Z])", " $1");
                 string uppername = Regex.Replace(pieces[1], "(?<=.)([A-Z])", "_$0").ToUpper();
                 string[] row = new string[] { name, "GOOD" };
+                int id = int.Parse(pieces[0]);
                 FaultDGV.Rows.Add(row);
-                fault_rows.Add(int.Parse(pieces[0]), FaultDGV.Rows[FaultDGV.RowCount - 1]);
+                fault_rows.Add(id, FaultDGV.Rows[FaultDGV.RowCount - 1]);
                 FaultDGV.Rows[FaultDGV.RowCount - 1].Cells[1].Style.BackColor = Color.LightGreen;
 
-                StringBuilder sb = new StringBuilder("#define F_");
+                sb.Clear();
+                sb.Append("#define F_");
                 sb.Append(uppername);
                 sb.Append(' ');
                 sb.Append(pieces[0]);
                 sw.WriteLine(sb.ToString());
+
+                max_f = max_f < id ? id : max_f;
             }
             sr.Close();
-            sw.WriteLine();
+
+            max_f++;
+            sb.Clear();
+            sb.Append("#define MAX_FAULT_LENGTH ");
+            sb.Append(max_f);
+            sw.WriteLine(sb.ToString());
             sw.Close();
         }
     }

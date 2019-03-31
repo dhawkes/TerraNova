@@ -1,16 +1,15 @@
-#include "JumpMotor.hpp"
+#include "WirelessCommunication.hpp"
 
-JumpMotor j(30, 34, A14, A0, 0, 2 * 175);
+WirelessCommunication wc(&Serial1);
 
 void setup() {
-  // put your setup code here, to run once:
-  j.init();
-  Serial.begin(9600);
-  j.setSpeed(100);
+  wc.init();
+  wc.setDataValue(5,10.2f);
+  wc.setDataValue(10, 11.0f);
+  wc.setFaultValue(0, true);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println(j.readRotationalSpeed());
-  delay(100);
+  wc.sendMessages();
+  delay(5000);
 }

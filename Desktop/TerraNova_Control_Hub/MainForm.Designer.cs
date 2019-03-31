@@ -45,6 +45,8 @@
             this.statusCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SaveBT = new System.Windows.Forms.Button();
             this.ResetBT = new System.Windows.Forms.Button();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.colorDialog2 = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FaultDGV)).BeginInit();
@@ -268,6 +270,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn valueCol;
         private System.Windows.Forms.Button SaveBT;
         private System.Windows.Forms.Button ResetBT;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.ColorDialog colorDialog2;
     }
 }
 
