@@ -5,6 +5,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.IO.Ports;
+using System.Diagnostics;
 
 namespace TerraNova_Control_Hub
 {
@@ -13,6 +15,8 @@ namespace TerraNova_Control_Hub
         // Control variables
         Gamepad joystick;
         string serial_port = "COM10";
+        SerialPort serial;
+        Stopwatch stopwatch;
 
         // GUI variables
         Image init_img;
@@ -25,6 +29,7 @@ namespace TerraNova_Control_Hub
         // Data variables
         Dictionary<int, DataGridViewRow> data_rows;
         Dictionary<int, DataGridViewRow> fault_rows;
+        byte[] leftovers;
 
         List<(long time, int id, float val)> data_log;
         List<(long time, int id, bool val)> fault_log;
@@ -32,6 +37,8 @@ namespace TerraNova_Control_Hub
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            leftovers = new byte[0];
+            stopwatch = new Stopwatch();
 
             g.DrawImage(init_img, new Point(0, 0));
 
@@ -86,6 +93,10 @@ namespace TerraNova_Control_Hub
                 LogFileTB.Text = "Filename";
                 LogFileTB.ForeColor = Color.Gray;
             }
+            else
+            {
+                stopwatch.Start();
+            }
         }
 
         private void ResetBT_Click(object sender, EventArgs e)
@@ -101,6 +112,7 @@ namespace TerraNova_Control_Hub
             {
                 data_log.Clear();
                 fault_log.Clear();
+                stopwatch.Restart();
             }
         }
 
@@ -200,8 +212,141 @@ namespace TerraNova_Control_Hub
 
             // Initialize components
             joystick = new Gamepad(1);                  // Connect to the xbox controller
-            /*serial = new SerialPort("COM5", 115200);    // Connect to the Laptop ESP via serial port COM5
-            serial.Open();*/
+            serial = new SerialPort("COM10", 115200);    // Connect to the xbee
+            serial.ReadBufferSize = 400;
+            serial.Open();
+            serial.ReadTimeout = 5;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            byte[] buff = new byte[800];
+            for(int c = 0; c < leftovers.Length; c++)
+            {
+                buff[c] = leftovers[c];
+            }
+            long time = stopwatch.ElapsedMilliseconds;
+
+            int len = 0;
+            try
+            {
+                len = serial.Read(buff, leftovers.Length, 400);
+            }
+            catch(Exception ex)
+            {
+                return;
+            }
+            len += leftovers.Length;
+
+            int i = 0;
+            while(i < len - 1)
+            {
+                if(buff[i] == 0xFC && ((i > 0 && buff[i-1] != 0xFA) || i == 0))
+                {
+                    List<byte> frame = new List<byte>();
+                    int start = i;
+                    i++;
+                    while(buff[i] != 0xFD || buff[i-1] == 0xFA)
+                    {
+                        frame.Add(buff[i]);
+                        i++;
+                        if(i == len)
+                        {
+                            leftovers = new byte[i - start];
+                            for(int j = start; j < i; j++)
+                            {
+                                leftovers[j - start] = buff[j];
+                            }
+                            break;
+                        }
+                    }
+
+                    if (i == len)
+                        break;
+
+                    processFrame(frame.ToArray(), time);
+                }
+                i++;
+
+                
+            }
+        }
+
+        private void processFrame(byte[] frame, long time)
+        {
+            if (frame.Length < 5)
+                return;
+            int des_len = 0;
+            if (frame[0] == 0xFF)
+                des_len = 5;
+            else if (frame[0] == 0xDD)
+                des_len = 8;
+            else
+                return;
+
+            byte[] parsed_frame = new byte[des_len];
+            int k = 0;
+            for(int i = 0; i < des_len; i++)
+            {
+                if(frame[k] == 0xFA)
+                {
+                    if(k + 1 < frame.Length && frame[k + 1] == 0xFA)
+                    {
+                        parsed_frame[i] = 0xFA;
+                        k += 2;
+                    }
+                    else
+                    {
+                        k++;
+                        i--;
+                    }
+                }
+                else
+                {
+                    parsed_frame[i] = frame[k];
+                    k++;
+                }
+            }
+
+            if (k != frame.Length)
+                return;
+
+            byte[] no_check = new byte[des_len - 2];
+            for (int j = 0; j < des_len - 2; j++)
+            {
+                no_check[j] = parsed_frame[j];
+            }
+
+            byte[] check = Fletcher16(no_check);
+
+            if (check[1] != parsed_frame[des_len - 2] || check[0] != parsed_frame[des_len - 1])
+                return;
+
+            if(no_check[0] == 0xDD && no_check[1] < data_rows.Count)
+            {
+                float val = BitConverter.ToSingle(no_check, 2);
+                data_rows[no_check[1]].Cells[2].Value = val.ToString();
+                data_log.Add((time, no_check[1], val));
+            }
+            else if(no_check[0] == 0xFF)
+            {
+                byte f = no_check[1];
+                int j = 0;
+                for(int i = 0; i < fault_rows.Count; i++)
+                {
+                    if(j == 8)
+                    {
+                        j = 0;
+                        f = no_check[2];
+                    }
+
+                    bool val = (f & (1 << j)) > 0;
+                    fault_rows[i].Cells[1].Value = val ? "FAULT" : "GOOD";
+                    fault_rows[i].Cells[1].Style.BackColor = val ? Color.Red : Color.LightGreen;
+                    fault_log.Add((time, i, val));
+                    j++;
+                }
+            }
         }
 
         // This is run every 50ms
@@ -219,8 +364,59 @@ namespace TerraNova_Control_Hub
             {
                 Controller_Status_LB.Text = "DISCONNECTED";
                 Controller_Status_LB.ForeColor = Color.Red;
-                return;
+                //return;
             }
+
+            // Sync, Driving, Steering, Buttons (A B X Y LT RT LB RB), DPAD (Up Down Left Right), Checksum, Checksum
+            byte[] message = new byte[4];
+            
+            message[0] = (byte)(100.0f * joystick.Thumbsticks.Left.Y + 100);
+            message[1] = (byte)(100.0f * joystick.Thumbsticks.Right.X + 100);
+            if (joystick.A)
+                message[2] |= 1 << 0;
+            if (joystick.B)
+                message[2] |= 1 << 1;
+            if (joystick.X)
+                message[2] |= 1 << 2;
+            if (joystick.Y)
+                message[2] |= 1 << 3;
+            if (joystick.LeftTrigger > 0.4)
+                message[2] |= 1 << 4;
+            if (joystick.RightTrigger > 0.4)
+                message[2] |= 1 << 5;
+
+            if (joystick.DPad.Up)
+                message[3] |= 1 << 0;
+            if (joystick.DPad.Down)
+                message[3] |= 1 << 1;
+            if (joystick.DPad.Left)
+                message[3] |= 1 << 2;
+            if (joystick.DPad.Right)
+                message[3] |= 1 << 3;
+            if (joystick.LeftBumper)
+                message[3] |= 1 << 4;
+            if (joystick.RightBumper)
+                message[3] |= 1 << 5;
+
+            byte[] checksum = Fletcher16(message);
+
+            List<byte> buff = new List<byte>();
+            buff.Add(0xFC);
+            for (int i = 0; i < 6; i++)
+            {
+                byte b = 0;
+                if (i < 4)
+                    b = message[i];
+                else
+                    b = checksum[i - 4];
+
+                //if (b == 0xFA || b == 0xFC || b == 0xFD)
+                    //buff.Add(0xFA);
+                buff.Add(b);
+            }
+            buff.Add(0xFD);
+            serial.Write(buff.ToArray(), 0, buff.Count);
+            
         }
 
         private void LoadConfig()
@@ -297,6 +493,34 @@ namespace TerraNova_Control_Hub
             sb.Append(max_f);
             sw.WriteLine(sb.ToString());
             sw.Close();
+        }
+
+        private byte[] Fletcher16(byte[] data)
+        {
+            UInt16 sum1 = 0xff, sum2 = 0xff;
+            int len = data.Length;
+            while (len > 0)
+            {
+                int tlen = len > 20 ? 20 : len;
+                len -= tlen;
+                int i = 0;
+                do
+                {
+                    sum2 += sum1 += data[i];
+                    i++;
+                } while (--tlen > 0);
+                sum1 = (UInt16)((UInt16)(sum1 & 0xff) + (UInt16)(sum1 >> 8));
+                sum2 = (UInt16)((UInt16)(sum2 & 0xff) + (UInt16)(sum2 >> 8));
+            }
+
+            sum1 = (UInt16)((UInt16)(sum1 & 0xff) + (UInt16)(sum1 >> 8));
+            sum2 = (UInt16)((UInt16)(sum2 & 0xff) + (UInt16)(sum2 >> 8));
+
+            byte[] output = new byte[2];
+            output[0] = (byte)sum1;
+            output[1] = (byte)sum2;
+
+            return output;
         }
     }
 }
