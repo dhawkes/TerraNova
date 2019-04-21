@@ -31,10 +31,13 @@ class WirelessCommunication {
     WirelessCommunication(HardwareSerial* serial);
     void init();
     void setDataValue(uint16_t id, float value);
+    float getDataValue(uint16_t id);
     void setFaultValue(uint16_t id, bool value);
     void sendMessages();
     bool receiveMessages(uint8_t* msg);
     bool buttonState(Button btn, ButtonState state);
+
+    uint8_t escapeMessage(uint8_t *data, uint8_t len);
 
   private:
     HardwareSerial* _serial;
@@ -44,7 +47,7 @@ class WirelessCommunication {
     bool _c_btns[12];
     bool _p_btns[12];
 
-    uint8_t escapeMessage(uint8_t *data, uint8_t len);
+    
     void updateButtons(uint8_t btn1, uint8_t btn2);
     uint16_t fletcher16(uint8_t* data, size_t len);
 };

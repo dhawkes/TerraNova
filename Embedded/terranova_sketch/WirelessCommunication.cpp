@@ -13,6 +13,10 @@ void WirelessCommunication::setDataValue(uint16_t id, float value) {
   _data[id] = value;
 }
 
+float WirelessCommunication::getDataValue(uint16_t id) {
+  return _data[id];
+}
+
 void WirelessCommunication::setFaultValue(uint16_t id, bool value) {
   _faults[id] = value;
 }
@@ -25,8 +29,8 @@ void WirelessCommunication::sendMessages() {
         f1 |= 1 << i;
     }
     else {
-      if(_faults[i])
-        f2 |= 1 << i;
+      if(_faults[i-8])
+        f2 |= 1 << (i-8);
     }
   }
 
@@ -74,7 +78,9 @@ uint8_t WirelessCommunication::escapeMessage(uint8_t *data, uint8_t len) {
     buff[k] = data[i];
     k++;
   }
-  data = buff;
+  for(int i = 0; i < k; i++) {
+    data[i] = buff[i];
+  }
   return k;
 }
 
@@ -143,8 +149,8 @@ void WirelessCommunication::updateButtons(uint8_t btn1, uint8_t btn2) {
   _c_btns[Button::B] = btn1 & 0b10;
   _c_btns[Button::X] = btn1 & 0b100 ;
   _c_btns[Button::Y] = btn1 & 0b1000 ;
-  _c_btns[Button::RT] = btn1 & 0b10000;
-  _c_btns[Button::LT] = btn1 & 0b100000;
+  _c_btns[Button::LT] = btn1 & 0b10000;
+  _c_btns[Button::RT] = btn1 & 0b100000;
 
   _c_btns[Button::DUP] = btn2 & 0b1;
   _c_btns[Button::DDOWN] = btn2 & 0b10;

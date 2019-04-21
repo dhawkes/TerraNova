@@ -16,7 +16,6 @@ namespace TerraNova_Control_Hub
         Gamepad joystick;
         string serial_port = "COM10";
         SerialPort serial;
-        Stopwatch stopwatch;
 
         // GUI variables
         Image init_img;
@@ -34,11 +33,12 @@ namespace TerraNova_Control_Hub
         List<(long time, int id, float val)> data_log;
         List<(long time, int id, bool val)> fault_log;
 
+        long time_ticks;
+
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             leftovers = new byte[0];
-            stopwatch = new Stopwatch();
 
             g.DrawImage(init_img, new Point(0, 0));
 
@@ -95,7 +95,7 @@ namespace TerraNova_Control_Hub
             }
             else
             {
-                stopwatch.Start();
+                time_ticks = 0;
             }
         }
 
@@ -112,7 +112,7 @@ namespace TerraNova_Control_Hub
             {
                 data_log.Clear();
                 fault_log.Clear();
-                stopwatch.Restart();
+                time_ticks = 0;
             }
         }
 
@@ -183,7 +183,7 @@ namespace TerraNova_Control_Hub
 
         private void LogFileTB_Click(object sender, EventArgs e)
         {
-            if(LogFileTB.Text == "Filename")
+            if (LogFileTB.Text == "Filename")
             {
                 LogFileTB.Text = "";
                 LogFileTB.ForeColor = Color.Black;
@@ -192,7 +192,6 @@ namespace TerraNova_Control_Hub
 
         public MainForm()
         {
-            // Initialize graphic components
             InitializeComponent();
             pictureBox1.Image = new Bitmap(pictureBox1.Image, pictureBox1.Size);
             init_img = pictureBox1.Image;
@@ -214,8 +213,15 @@ namespace TerraNova_Control_Hub
             joystick = new Gamepad(1);                  // Connect to the xbox controller
             serial = new SerialPort("COM10", 115200);    // Connect to the xbee
             serial.ReadBufferSize = 400;
-            serial.Open();
-            serial.ReadTimeout = 5;
+            try
+            {
+                serial.Open();
+            }
+            catch(Exception e)
+            {
+                Close();
+            }
+            serial.ReadTimeout = 1;
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -225,7 +231,6 @@ namespace TerraNova_Control_Hub
             {
                 buff[c] = leftovers[c];
             }
-            long time = stopwatch.ElapsedMilliseconds;
 
             int len = 0;
             try
@@ -237,6 +242,9 @@ namespace TerraNova_Control_Hub
                 return;
             }
             len += leftovers.Length;
+
+            long time = timer2.Interval * time_ticks;
+            time_ticks++;
 
             int i = 0;
             while(i < len - 1)
@@ -270,6 +278,8 @@ namespace TerraNova_Control_Hub
 
                 
             }
+
+
         }
 
         private void processFrame(byte[] frame, long time)
@@ -288,6 +298,8 @@ namespace TerraNova_Control_Hub
             int k = 0;
             for(int i = 0; i < des_len; i++)
             {
+                if (k >= frame.Length)
+                    break;
                 if(frame[k] == 0xFA)
                 {
                     if(k + 1 < frame.Length && frame[k + 1] == 0xFA)
@@ -326,7 +338,8 @@ namespace TerraNova_Control_Hub
             {
                 float val = BitConverter.ToSingle(no_check, 2);
                 data_rows[no_check[1]].Cells[2].Value = val.ToString();
-                data_log.Add((time, no_check[1], val));
+                if(log_CB.Checked)
+                    data_log.Add((time, no_check[1], val));
             }
             else if(no_check[0] == 0xFF)
             {
@@ -343,7 +356,8 @@ namespace TerraNova_Control_Hub
                     bool val = (f & (1 << j)) > 0;
                     fault_rows[i].Cells[1].Value = val ? "FAULT" : "GOOD";
                     fault_rows[i].Cells[1].Style.BackColor = val ? Color.Red : Color.LightGreen;
-                    fault_log.Add((time, i, val));
+                    if(log_CB.Checked)
+                        fault_log.Add((time, i, val));
                     j++;
                 }
             }
@@ -364,7 +378,7 @@ namespace TerraNova_Control_Hub
             {
                 Controller_Status_LB.Text = "DISCONNECTED";
                 Controller_Status_LB.ForeColor = Color.Red;
-                //return;
+                return;
             }
 
             // Sync, Driving, Steering, Buttons (A B X Y LT RT LB RB), DPAD (Up Down Left Right), Checksum, Checksum

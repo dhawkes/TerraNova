@@ -48,6 +48,7 @@ class SuspensionMotor
 
     void setAngle(const float &angle)
     {
+      set_angle = angle;
       iq_->set(mult_->ctrl_angle_, angle);
     };
 
@@ -82,11 +83,17 @@ class SuspensionMotor
       setPid();
     }
 
+    float getSetAngle()
+    {
+      return set_angle;
+    }
 
   private:
     IqSerial                    *iq_;
     MultiTurnAngleControlClient *mult_;
     BrushlessDriveClient        *mot_;
+    
+    float set_angle;
 
     float Kp_ = 10;
     float Kd_ = 0;

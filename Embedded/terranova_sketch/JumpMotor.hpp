@@ -5,7 +5,7 @@
 
 class JumpMotor : public PinInterrupt {
   public:
-    JumpMotor(uint8_t PWM, uint8_t FAULT, uint8_t CS, uint8_t HALL, uint8_t ENC, uint16_t ticks_per_rot);
+    JumpMotor(uint8_t PWM, uint8_t DIR, uint8_t SLP, uint8_t FLT, uint8_t CS, uint8_t HAL, uint8_t ENC, uint16_t ticks_per_rot);
 
     void init();
     void setSpeed(uint8_t speed);
@@ -19,9 +19,11 @@ class JumpMotor : public PinInterrupt {
   private:
     Encoder* encoder;
     uint8_t _PWM;
-    uint8_t _FAULT;
+    uint8_t _DIR;
+    uint8_t _SLP;
+    uint8_t _FLT;
     uint8_t _CS;
-    uint8_t _HALL;
+    uint8_t _HAL;
     volatile bool fault;
     volatile bool checked;
 };

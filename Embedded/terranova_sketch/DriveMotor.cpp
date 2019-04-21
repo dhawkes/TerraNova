@@ -16,29 +16,44 @@ void DriveMotor::init() {
   pinMode(_EN, INPUT);
   pinMode(_CS, INPUT);
 
-  analogWriteFrequency(_PWM, 20000);
+  analogWriteFrequency(_PWM, 1000);
   analogWriteResolution(12);
   analogReadResolution(13);
 
   attachArgInterrupt(_EN, CHANGE);
   encoder->init();
+
+  _current_speed = 100;
+  _desired_speed = 100;
 }
 
-void DriveMotor::setSpeed(int8_t speed) {
-  bool reverse = false;
-  if(speed < 0) {
-    speed = -speed;
-    reverse = true;
+void DriveMotor::setSpeed(uint8_t speed) {
+  _desired_speed = speed > 200 ? 200 : speed;
+}
+
+void DriveMotor::updateSpeed(float supply_voltage) {
+  int spd = _current_speed - 100;
+  
+  if(_desired_speed != _current_speed) {
+    int nom_acc = 2;
+    int acc = nom_acc; //abs(_desired_speed - _current_speed) <= nom_acc * 2 ? nom_acc / 10 : nom_acc;
+    
+    
+    if(_desired_speed > _current_speed)
+      _current_speed += acc;
+    else
+      _current_speed -= acc;
   }
-  speed = speed > 100 ? 100 : speed;
+    
+  int max_ticks = 4096; //1200;
+  
+  analogWrite(_PWM, (max_ticks * abs(spd)) / 100);
 
-  analogWrite(_PWM, (4096 * speed) / 100);
-
-  if(speed == 0) {
+  if(spd < 10 && spd > -10) {
     digitalWrite(_INA, LOW);
     digitalWrite(_INB, LOW);
   }
-  else if(reverse) {
+  else if(spd < -10) {
     digitalWrite(_INA, LOW);
     digitalWrite(_INB, HIGH);
   }

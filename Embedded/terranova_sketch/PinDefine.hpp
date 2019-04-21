@@ -21,13 +21,10 @@
 #define JMENC 6   // blue
 #define JMHAL A11 // white
 
-// TODO : what the fuck are those
-// connector: C13 (triple pins)
+// SERVOS
 #define SSR 7 // grey
-// connector: C14 (triple pins)
 #define SSL 8 // bridge
-// connector: C15 (triple pins)
-#define JS  9 // grey
+#define JS  20 // blue
 
 // FORWARD LEFT MOTOR
 // connector: C3
