@@ -33,4 +33,4 @@ Unfortunatly this code was designed and tested to work with our TerraNova robot 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/dhawkes36/TerraNova/blob/dskart-repo-clean/LICENSE) file for details
