@@ -2,11 +2,7 @@
 
 ![terra_nova_logo](/Images/terranova.png)
 
-This repository contain all the code use to run the TerraNova rover
-
-### Prerequisites
-
-Honestly, you need our rover, soz
+This repository contain all the code use to run the TerraNova robot.
 
 ![moon_rover](/Images/moon_rover.jpg)
 
@@ -14,7 +10,7 @@ Honestly, you need our rover, soz
 
 * **Dylan Hawkes** - *Initial work* - [dhawkes36](https://github.com/dhawkes36)
 
-* **Raphael Van Hoffeln** - *Initial work* - [dskart](https://github.com/dskart)
+* **Raphael Van Hoffelen** - *Initial work* - [dskart](https://github.com/dskart)
 
 
 ## License
