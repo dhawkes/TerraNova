@@ -1,5 +1,3 @@
-# TerraNova
-
 ![terra_nova_logo](/Images/terranova.png)
 
 Welcome to TerraNova's repository ! This project was made by a team of Mechanical engineering and Robotic's student in collaboration with NASA at the University of Pennsylvania.  
